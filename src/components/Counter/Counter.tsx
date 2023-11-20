@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 
 import IconButton from '../UI/IconButton.tsx';
 import MinusIcon from '../UI/Icons/MinusIcon.tsx';
 import PlusIcon from '../UI/Icons/PlusIcon.tsx';
 import CounterOutput from './CounterOutput.tsx';
+import CounterHistory from './CounterHistory.tsx';
 import { log } from '../../log.ts';
 
 function isPrime(number: number) {
@@ -23,19 +24,31 @@ function isPrime(number: number) {
   return true;
 }
 
-export default function Counter({ initialCount }: { initialCount: number }) {
+const Counter = memo(({ initialCount }: { initialCount: number }) => {
   log('<Counter /> rendered', 1);
-  const initialCountIsPrime = isPrime(initialCount);
 
-  const [counter, setCounter] = useState(initialCount);
+  const initialCountIsPrime = useMemo(
+    () => isPrime(initialCount),
+    [initialCount]
+  );
 
-  function handleDecrement() {
-    setCounter(prevCounter => prevCounter - 1);
-  }
+  // const [counter, setCounter] = useState(initialCount);
+  const [counterChanges, setCounterChanges] = useState([initialCount]);
 
-  function handleIncrement() {
-    setCounter(prevCounter => prevCounter + 1);
-  }
+  const currentCounter = counterChanges.reduce(
+    (prevCounter, counterChange) => prevCounter + counterChange,
+    0
+  );
+
+  const handleDecrement = useCallback(() => {
+    // setCounter(prevCounter => prevCounter - 1);
+    setCounterChanges(prevCounterChanges => [-1, ...prevCounterChanges]);
+  }, []);
+
+  const handleIncrement = useCallback(() => {
+    // setCounter(prevCounter => prevCounter + 1);
+    setCounterChanges(prevCounterChanges => [1, ...prevCounterChanges]);
+  }, []);
 
   return (
     <section className="counter">
@@ -47,11 +60,14 @@ export default function Counter({ initialCount }: { initialCount: number }) {
         <IconButton icon={MinusIcon} onClick={handleDecrement}>
           Decrement
         </IconButton>
-        <CounterOutput value={counter} />
+        <CounterOutput value={currentCounter} />
         <IconButton icon={PlusIcon} onClick={handleIncrement}>
           Increment
         </IconButton>
       </p>
+      <CounterHistory history={counterChanges} />
     </section>
   );
-}
+});
+
+export default Counter;
