@@ -6,3 +6,7 @@ export interface IconButtonProps
 export interface ConfigureCounterProps {
   onSet: (newCount: number) => void;
 }
+
+export interface CounterHistoryProps {
+  history: { id: number; value: number }[];
+}

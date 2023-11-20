@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { CounterHistoryProps } from '../../types.ts';
 import { log } from '../../log.ts';
 
 function HistoryItem({ count }: { count: number }) {
@@ -18,13 +18,13 @@ function HistoryItem({ count }: { count: number }) {
   );
 }
 
-export default function CounterHistory({ history }: { history: number[] }) {
+export default function CounterHistory({ history }: CounterHistoryProps) {
   log('<CounterHistory /> rendered', 2);
 
   return (
     <ol>
-      {history.map((count, index) => (
-        <HistoryItem key={index} count={count} />
+      {history.map(count => (
+        <HistoryItem key={count.id} count={count.value} />
       ))}
     </ol>
   );
