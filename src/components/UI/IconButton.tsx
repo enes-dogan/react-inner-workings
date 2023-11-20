@@ -1,11 +1,8 @@
+import { memo } from 'react';
 import { IconButtonProps } from '../../types.ts';
 import { log } from '../../log.ts';
 
-export default function IconButton({
-  children,
-  icon,
-  ...props
-}: IconButtonProps) {
+const IconButton = memo(({ children, icon, ...props }: IconButtonProps) => {
   log('<IconButton /> rendered', 2);
 
   const Icon = icon;
@@ -15,4 +12,6 @@ export default function IconButton({
       <span className="button-text">{children}</span>
     </button>
   );
-}
+});
+
+export default IconButton;
